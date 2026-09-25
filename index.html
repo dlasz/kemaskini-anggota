@@ -1,170 +1,384 @@
-const TAB_INDUK = "DATA ANGGOTA";
-const TAB_KKA = "KKA";
-
-// 1. Ambil data nombor siri BIL seterusnya
-function getNextBil(sheet) {
-  let lastRow = sheet.getLastRow();
-  let nextBil = 1;
-  if (lastRow >= 2) {
-    let currentLastBil = sheet.getRange(lastRow, 1).getValue();
-    if (!isNaN(currentLastBil) && currentLastBil !== "") {
-      nextBil = Number(currentLastBil) + 1;
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Pengurusan Anggota PU Kuching</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 20px 15px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #08101d;
+      background-image: 
+        linear-gradient(to right, rgba(8, 16, 29, 0.4) 0%, rgba(8, 16, 29, 0.95) 30%, rgba(8, 16, 29, 0.95) 70%, rgba(8, 16, 29, 0.4) 100%),
+        url('bg.JPG'),
+        url('bg.JPG');
+      background-position: left center, right center;
+      background-repeat: no-repeat, no-repeat;
+      background-size: auto 100%, auto 100%;
+      background-attachment: fixed;
     }
-  }
-  return nextBil;
-}
+    .card {
+      background-color: rgba(15, 27, 45, 0.95);
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      padding: 22px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 1;
+    }
+    .header-box {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header-box img {
+      width: 95px;
+      height: auto;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+    }
+    .header-box h2 {
+      color: #38bdf8;
+      margin: 0;
+      font-size: 1.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .header-box p {
+      color: #94a3b8;
+      margin: 4px 0 0 0;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      flex: 1;
+      padding: 10px;
+      background-color: #1e2e47;
+      color: #94a3b8;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background-color: #0284c7;
+      color: white;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .section-title {
+      font-size: 0.82rem;
+      font-weight: bold;
+      color: #38bdf8;
+      border-bottom: 1px solid #1e3a5f;
+      padding-bottom: 4px;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    label {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      display: block;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px;
+      background-color: #091322;
+      border: 1px solid #243b5a;
+      border-radius: 6px;
+      color: white;
+      box-sizing: border-box;
+      font-size: 0.9rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #0284c7;
+    }
+    .auto-field {
+      background-color: #1a273a;
+      color: #38bdf8;
+      font-weight: bold;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .btn-mka { background-color: #0284c7; color: white; }
+    .btn-kka { background-color: #e11d48; color: white; }
+    .status-msg {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
 
-// 2. Proses MKA & KKA
-function doPost(e) {
-  try {
-    const req = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
+  <div class="card">
+    <div class="header-box">
+      <img src="logo.png" alt="Logo PU Kuching" onerror="this.style.display='none'">
+      <h2>Pangkalan Udara Kuching</h2>
+      <p>Sistem Pengurusan Kekuatan Anggota</p>
+    </div>
 
-    // ==========================================
-    // ALIRAN MKA: MASUK KEKUATAN
-    // ==========================================
-    if (req.action === "MKA") {
-      let sheetInduk = ss.getSheetByName(TAB_INDUK);
-      let sheetCwg = ss.getSheetByName(req.targetTab);
+    <div class="tabs">
+      <button id="btnMKA" class="active" onclick="switchMod('MKA')">MKA (Lapor Masuk)</button>
+      <button id="btnKKA" onclick="switchMod('KKA')">KKA (Lapor Keluar)</button>
+    </div>
 
-      if (!sheetInduk) {
-        return ContentService.createTextOutput(JSON.stringify({ 
-          status: "error", 
-          message: "Tab DATA ANGGOTA tidak dijumpai!" 
-        })).setMimeType(ContentService.MimeType.JSON);
+    <!-- BORANG MKA -->
+    <div id="formMKA" class="tab-content active">
+      <div class="section-title">Penempatan & Butiran Perkhidmatan</div>
+      
+      <label>Pilihan Tab Cawangan / Skn:</label>
+      <select id="mkaTabTarget">
+        <option value="NO 1 SKN">NO 1 SKN</option>
+        <option value="SKN 330">SKN 330</option>
+        <option value="DETCH 3 SKN">DETCH 3 SKN</option>
+        <option value="CWG KEJURUTERAAN">CWG KEJURUTERAAN</option>
+        <option value="CWG OPERASI">CWG OPERASI</option>
+        <option value="CWG MATERIEL">CWG MATERIEL</option>
+        <option value="CWG TADBIR">CWG TADBIR</option>
+        <option value="SKN 215 HANDAU">SKN 215 HANDAU</option>
+        <option value="CWG BOMBA">CWG BOMBA</option>
+      </select>
+
+      <label>No Tentera:</label>
+      <input type="text" id="mkaNoTen" placeholder="Contoh: 372494">
+
+      <label>Pangkat Semasa:</label>
+      <input type="text" id="mkaPkt" placeholder="Contoh: LT KOL TUDM">
+
+      <label>Nama Penuh:</label>
+      <input type="text" id="mkaNama" placeholder="NAMA PENUH">
+
+      <label>Tarikh MKA:</label>
+      <input type="date" id="mkaTarikh">
+
+      <label>Tred / Ketukangan:</label>
+      <input type="text" id="mkaTred" placeholder="Contoh: JURUTERBANG / KEJURUTERAAN">
+
+      <div class="section-title">Maklumat Peribadi</div>
+      <label>No Kad Pengenalan Anggota:</label>
+      <input type="text" id="mkaNoKp" placeholder="Contoh: 900202-03-2563" oninput="prosesKadPengenalan(this.value)">
+
+      <label>Bangsa / Agama / Status:</label>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="mkaBangsa" placeholder="Bangsa">
+        <input type="text" id="mkaAgama" placeholder="Agama">
+        <input type="text" id="mkaStatus" placeholder="Kahwin/Bujang">
+      </div>
+
+      <label>Tarikh Lahir & Umur (Auto):</label>
+      <div style="display:flex; gap:6px;">
+        <input type="date" id="mkaTarikhLahir" onchange="kiraUmur(this.value)">
+        <input type="number" id="mkaUmur" class="auto-field" placeholder="Umur (Auto)" readonly>
+      </div>
+
+      <label>No Telefon Anggota:</label>
+      <input type="text" id="mkaNoTel" placeholder="Contoh: 013-5332494">
+
+      <label>Email Airforce & Personal:</label>
+      <input type="email" id="mkaEmailAF" placeholder="emel@airforce.mil.my" style="margin-bottom:6px;">
+      <input type="email" id="mkaEmailPersonal" placeholder="emel.peribadi@gmail.com">
+
+      <div class="section-title">Maklumat Waris</div>
+      <label>Nama Waris:</label>
+      <input type="text" id="mkaNamaWaris" placeholder="Nama waris terdekat">
+
+      <label>Hubungan & No Telefon Waris:</label>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="mkaHubunganWaris" placeholder="Isteri / Ibu / Bapa">
+        <input type="text" id="mkaNoTelWaris" placeholder="No Tel Waris">
+      </div>
+
+      <label>Alamat Kediaman / Waris:</label>
+      <textarea id="mkaAlamatWaris" rows="2" placeholder="Alamat rumah"></textarea>
+
+      <button class="btn-submit btn-mka" onclick="hantarMKA()">MASUK KEKUATAN (MKA)</button>
+      <div id="statusMKA" class="status-msg"></div>
+    </div>
+
+    <!-- BORANG KKA -->
+    <div id="formKKA" class="tab-content">
+      <p style="font-size:0.82rem; color:#94a3b8; line-height:1.4;">
+        Masukkan No Tentera. Sistem akan mencari rekod anggota, memindahkannya ke tab <strong>KKA</strong> dan memadamkannya dari tab asal serta pangkalan DATA ANGGOTA.
+      </p>
+
+      <label>Nombor Tentera:</label>
+      <input type="text" id="kkaNoTen" placeholder="Contoh: 372494">
+
+      <label>Tarikh Keluar (KKA):</label>
+      <input type="date" id="kkaTarikh">
+
+      <label>Catatan Pertukaran / Unit Baharu:</label>
+      <textarea id="kkaCatatan" rows="3" placeholder="Contoh: Bertukar ke Markas Tentera Udara"></textarea>
+
+      <button class="btn-submit btn-kka" onclick="hantarKKA()">KELUARKAN DARI KEKUATAN (KKA)</button>
+      <div id="statusKKA" class="status-msg"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxZyO-6mvKI5slXGMix03U2I7FK545NGeqvvVJJLbd8VTaw0IhooCN-iK2JsdpQseE1CQ/exec";
+
+    function prosesKadPengenalan(ic) {
+      const cleanIC = ic.replace(/[^0-9]/g, '');
+      if (cleanIC.length >= 6) {
+        let yr = parseInt(cleanIC.substring(0, 2), 10);
+        const mm = cleanIC.substring(2, 4);
+        const dd = cleanIC.substring(4, 6);
+
+        const currentShortYear = new Date().getFullYear() % 100;
+        const fullYear = (yr <= currentShortYear) ? (2000 + yr) : (1900 + yr);
+
+        const tarikhLahirStr = `${fullYear}-${mm}-${dd}`;
+        document.getElementById("mkaTarikhLahir").value = tarikhLahirStr;
+        kiraUmur(tarikhLahirStr);
       }
-      if (!sheetCwg) {
-        return ContentService.createTextOutput(JSON.stringify({ 
-          status: "error", 
-          message: "Tab cawangan " + req.targetTab + " tidak dijumpai!" 
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-
-      // Format baris asas (Lajur B hingga AI)
-      let commonFields = [
-        req.noTentera || "",          // B: NO TEN
-        req.pangkat || "",            // C: PKT
-        req.nama || "",               // D: NAMA
-        req.mka || "",                // E: MKA
-        req.tred || "",               // F: TRED
-        req.noKpAnggota || "",        // G: NO KP (ANGGOTA)
-        req.bangsa || "",             // H: BANGSA
-        req.agama || "",              // I: AGAMA
-        req.statusKahwin || "",       // J: STATUS
-        req.tarikhLahir || "",        // K: TARIKH LAHIR
-        req.umur || "",               // L: UMUR (TAHUN)
-        req.tmpt || "",               // M: TMPT
-        req.tpt || "",                // N: TPT
-        req.tatademmot || "",         // O: TATADEMOT
-        req.jumlahTahunKhidmat || "", // P: JUMLAH TAHUN PERKHIDMATAN
-        req.unitInsuran || "",        // Q: UNIT INSURAN
-        req.noAhliInsuran || "",      // R: NO AHLI INSURAN
-        req.noTel || "",              // S: NO TELEFON
-        req.pangkatPangkuan || "",    // T: PANGKAT PANGKUAN
-        req.pangkatTetap || "",       // U: PANGKAT TETAP
-        req.daerahMengundi || "",     // V: DAERAH MENGUNDI
-        req.dun || "",                // W: DUN
-        req.parlimen || "",           // X: PARLIMEN
-        req.negeri || "",             // Y: NEGERI
-        req.namaWaris || "",          // Z: NAMA WARIS
-        req.hubunganWaris || "",      // AA: HUBUNGAN
-        req.pekerjaanWaris || "",     // AB: PEKERJAAN
-        req.noKpWaris || "",          // AC: NO K/P (WARIS)
-        req.alamatWaris || "",        // AD: ALAMAT WARIS
-        req.noTelWaris || "",         // AE: NO TEL (WARIS)
-        req.bilAnak || "",            // AF: BIL ANAK
-        req.emailAirforce || "",      // AG: EMAIL AIRFORCE
-        req.emailPersonal || "",      // AH: EMAIL PERSONAL
-        req.catatan || ""             // AI: CATATAN
-      ];
-
-      // 1. Masukkan ke tab induk (DATA ANGGOTA)
-      let bilInduk = getNextBil(sheetInduk);
-      sheetInduk.appendRow([bilInduk, ...commonFields]);
-
-      // 2. Masukkan ke tab Cawangan / Skn (kecuali jika pilihan memang DATA ANGGOTA)
-      if (req.targetTab !== TAB_INDUK) {
-        let bilCwg = getNextBil(sheetCwg);
-        sheetCwg.appendRow([bilCwg, ...commonFields]);
-      }
-
-      return ContentService.createTextOutput(JSON.stringify({ 
-        status: "success", 
-        message: "Berjaya didaftarkan ke DATA ANGGOTA & " + req.targetTab 
-      })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // ==========================================
-    // ALIRAN KKA: KELUAR KEKUATAN
-    // ==========================================
-    if (req.action === "KKA") {
-      let sheetKKA = ss.getSheetByName(TAB_KKA);
-      if (!sheetKKA) {
-        return ContentService.createTextOutput(JSON.stringify({ 
-          status: "error", 
-          message: "Tab KKA tidak dijumpai!" 
-        })).setMimeType(ContentService.MimeType.JSON);
+    function kiraUmur(tarikhStr) {
+      if (!tarikhStr) return;
+      const tLahir = new Date(tarikhStr);
+      const hariIni = new Date();
+      
+      let umur = hariIni.getFullYear() - tLahir.getFullYear();
+      const perbezaanBulan = hariIni.getMonth() - tLahir.getMonth();
+      
+      if (perbezaanBulan < 0 || (perbezaanBulan === 0 && hariIni.getDate() < tLahir.getDate())) {
+        umur--;
       }
-
-      let noTen = String(req.noTentera).trim();
-      let allSheets = ss.getSheets();
-      let rowDataSalinan = null;
-      let asalUnit = "";
-
-      // Cari rekod daripada cawangan/skuadron dahulu
-      for (let s = 0; s < allSheets.length; s++) {
-        let sName = allSheets[s].getName();
-        if (sName === TAB_KKA || sName === TAB_INDUK || sName.startsWith("SPR")) continue;
-
-        let data = allSheets[s].getDataRange().getValues();
-        for (let r = 1; r < data.length; r++) {
-          if (String(data[r][1]).trim() === noTen) {
-            rowDataSalinan = data[r].slice();
-            asalUnit = sName;
-            allSheets[s].deleteRow(r + 1); // Padam dari cawangan
-            break;
-          }
-        }
-        if (rowDataSalinan) break;
+      
+      if (umur >= 0 && umur < 120) {
+        document.getElementById("mkaUmur").value = umur;
       }
+    }
 
-      // Padam dari tab DATA ANGGOTA
-      let sheetInduk = ss.getSheetByName(TAB_INDUK);
-      if (sheetInduk) {
-        let dataInduk = sheetInduk.getDataRange().getValues();
-        for (let r = 1; r < dataInduk.length; r++) {
-          if (String(dataInduk[r][1]).trim() === noTen) {
-            if (!rowDataSalinan) {
-              rowDataSalinan = dataInduk[r].slice();
-              asalUnit = "DATA ANGGOTA";
-            }
-            sheetInduk.deleteRow(r + 1); // Padam dari DATA ANGGOTA
-            break;
-          }
-        }
-      }
+    function switchMod(mod) {
+      document.getElementById("formMKA").classList.remove("active");
+      document.getElementById("formKKA").classList.remove("active");
+      document.getElementById("btnMKA").classList.remove("active");
+      document.getElementById("btnKKA").classList.remove("active");
 
-      if (rowDataSalinan) {
-        let bilKKA = getNextBil(sheetKKA);
-        rowDataSalinan[0] = bilKKA; // Kemaskini BIL KKA
-        rowDataSalinan[34] = "KKA dari " + asalUnit + " [" + (req.tarikhKKA || new Date().toLocaleDateString('ms-MY')) + "]: " + (req.catatanKKA || "Bertukar Keluar");
-        sheetKKA.appendRow(rowDataSalinan);
-
-        return ContentService.createTextOutput(JSON.stringify({ 
-          status: "success", 
-          message: "Rekod dipindahkan ke KKA dan dipadam daripada DATA ANGGOTA & " + asalUnit 
-        })).setMimeType(ContentService.MimeType.JSON);
+      if (mod === "MKA") {
+        document.getElementById("formMKA").classList.add("active");
+        document.getElementById("btnMKA").classList.add("active");
       } else {
-        return ContentService.createTextOutput(JSON.stringify({ 
-          status: "not_found", 
-          message: "Nombor Tentera " + noTen + " tidak dijumpai dalam mana-mana unit!" 
-        })).setMimeType(ContentService.MimeType.JSON);
+        document.getElementById("formKKA").classList.add("active");
+        document.getElementById("btnKKA").classList.add("active");
       }
     }
 
-    return ContentService.createTextOutput(JSON.stringify({ status: "invalid_action" })).setMimeType(ContentService.MimeType.JSON);
+    async function hantarMKA() {
+      const statusBox = document.getElementById("statusMKA");
+      const noTen = document.getElementById("mkaNoTen").value.trim();
+      const nama = document.getElementById("mkaNama").value.trim();
 
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
+      if (!noTen || !nama) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Sila lengkapkan No Tentera dan Nama!</span>";
+        return;
+      }
+
+      statusBox.innerHTML = "<span style='color:#38bdf8;'>Sedang mendaftarkan maklumat...</span>";
+
+      const payload = {
+        action: "MKA",
+        targetTab: document.getElementById("mkaTabTarget").value,
+        noTentera: noTen,
+        pangkat: document.getElementById("mkaPkt").value.trim(),
+        nama: nama,
+        mka: document.getElementById("mkaTarikh").value,
+        tred: document.getElementById("mkaTred").value.trim(),
+        noKpAnggota: document.getElementById("mkaNoKp").value.trim(),
+        bangsa: document.getElementById("mkaBangsa").value.trim(),
+        agama: document.getElementById("mkaAgama").value.trim(),
+        statusKahwin: document.getElementById("mkaStatus").value.trim(),
+        tarikhLahir: document.getElementById("mkaTarikhLahir").value,
+        umur: document.getElementById("mkaUmur").value.trim(),
+        noTel: document.getElementById("mkaNoTel").value.trim(),
+        emailAirforce: document.getElementById("mkaEmailAF").value.trim(),
+        emailPersonal: document.getElementById("mkaEmailPersonal").value.trim(),
+        namaWaris: document.getElementById("mkaNamaWaris").value.trim(),
+        hubunganWaris: document.getElementById("mkaHubunganWaris").value.trim(),
+        noTelWaris: document.getElementById("mkaNoTelWaris").value.trim(),
+        alamatWaris: document.getElementById("mkaAlamatWaris").value.trim()
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.status === "success") {
+          statusBox.innerHTML = `<span style='color:#4ade80;'>${result.message}</span>`;
+          document.getElementById("mkaNoTen").value = "";
+          document.getElementById("mkaNama").value = "";
+        } else {
+          statusBox.innerHTML = `<span style='color:#f87171;'>${result.message}</span>`;
+        }
+      } catch (err) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat semasa menghantar data.</span>";
+      }
+    }
+
+    async function hantarKKA() {
+      const statusBox = document.getElementById("statusKKA");
+      const noTen = document.getElementById("kkaNoTen").value.trim();
+
+      if (!noTen) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Sila masukkan No Tentera!</span>";
+        return;
+      }
+
+      statusBox.innerHTML = "<span style='color:#38bdf8;'>Sedang memindahkan rekod ke KKA...</span>";
+
+      const payload = {
+        action: "KKA",
+        noTentera: noTen,
+        tarikhKKA: document.getElementById("kkaTarikh").value,
+        catatanKKA: document.getElementById("kkaCatatan").value.trim()
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.status === "success") {
+          statusBox.innerHTML = `<span style='color:#4ade80;'>${result.message}</span>`;
+          document.getElementById("kkaNoTen").value = "";
+          document.getElementById("kkaCatatan").value = "";
+        } else {
+          statusBox.innerHTML = `<span style='color:#f87171;'>${result.message}</span>`;
+        }
+      } catch (err) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat sambungan.</span>";
+      }
+    }
+  </script>
+</body>
+</html>
