@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Pengurusan Anggota PU Kuching</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #0b1526;
+      color: #f1f5f9;
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background-color: #132238;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    h2 {
+      color: #38bdf8;
+      text-align: center;
+      margin-top: 0;
+      font-size: 1.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      flex: 1;
+      padding: 10px;
+      background-color: #1e2e47;
+      color: #94a3b8;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background-color: #0284c7;
+      color: white;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #38bdf8;
+      border-bottom: 1px solid #1e3a5f;
+      padding-bottom: 4px;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    label {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      display: block;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px;
+      background-color: #091322;
+      border: 1px solid #243b5a;
+      border-radius: 6px;
+      color: white;
+      box-sizing: border-box;
+      font-size: 0.9rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #0284c7;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .btn-mka { background-color: #0284c7; color: white; }
+    .btn-kka { background-color: #e11d48; color: white; }
+    .status-msg {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>PENGURUSAN KEKUATAN PU KUCHING</h2>
+
+    <div class="tabs">
+      <button id="btnMKA" class="active" onclick="switchMod('MKA')">MKA (Lapor Masuk)</button>
+      <button id="btnKKA" onclick="switchMod('KKA')">KKA (Lapor Keluar)</button>
+    </div>
+
+    <!-- BORANG MKA -->
+    <div id="formMKA" class="tab-content active">
+      <div class="section-title">Penempatan & Butiran Perkhidmatan</div>
+      
+      <label>Pilihan Tab Cawangan / Skn:</label>
+      <select id="mkaTabTarget">
+        <option value="DATA ANGGOTA">DATA ANGGOTA</option>
+        <option value="KEKUATAN SEBENAR">KEKUATAN SEBENAR</option>
+        <option value="TATADEMMOT">TATADEMMOT</option>
+        <option value="PANGKAT TETAP">PANGKAT TETAP</option>
+      </select>
+
+      <label>No Tentera:</label>
+      <input type="text" id="mkaNoTen" placeholder="Contoh: 372494">
+
+      <label>Pangkat Semasa:</label>
+      <input type="text" id="mkaPkt" placeholder="Contoh: LT KOL TUDM">
+
+      <label>Nama Penuh:</label>
+      <input type="text" id="mkaNama" placeholder="NAMA PENUH">
+
+      <label>Tarikh MKA:</label>
+      <input type="date" id="mkaTarikh">
+
+      <label>Tred / Ketukangan:</label>
+      <input type="text" id="mkaTred" placeholder="Contoh: JURUTERBANG / KEJURUTERAAN">
+
+      <div class="section-title">Maklumat Peribadi</div>
+      <label>No Kad Pengenalan Anggota:</label>
+      <input type="text" id="mkaNoKp" placeholder="Contoh: 850101-13-1234">
+
+      <label>Bangsa / Agama / Status:</label>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="mkaBangsa" placeholder="Bangsa">
+        <input type="text" id="mkaAgama" placeholder="Agama">
+        <input type="text" id="mkaStatus" placeholder="Kahwin/Bujang">
+      </div>
+
+      <label>Tarikh Lahir & Umur:</label>
+      <div style="display:flex; gap:6px;">
+        <input type="date" id="mkaTarikhLahir">
+        <input type="number" id="mkaUmur" placeholder="Umur (Tahun)">
+      </div>
+
+      <label>No Telefon Anggota:</label>
+      <input type="text" id="mkaNoTel" placeholder="Contoh: 013-5332494">
+
+      <label>Email Airforce & Personal:</label>
+      <input type="email" id="mkaEmailAF" placeholder="emel@airforce.mil.my" style="margin-bottom:6px;">
+      <input type="email" id="mkaEmailPersonal" placeholder="emel.peribadi@gmail.com">
+
+      <div class="section-title">Maklumat Waris</div>
+      <label>Nama Waris:</label>
+      <input type="text" id="mkaNamaWaris" placeholder="Nama waris terdekat">
+
+      <label>Hubungan & No Telefon Waris:</label>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="mkaHubunganWaris" placeholder="Isteri / Ibu / Bapa">
+        <input type="text" id="mkaNoTelWaris" placeholder="No Tel Waris">
+      </div>
+
+      <label>Alamat Kediaman / Waris:</label>
+      <textarea id="mkaAlamatWaris" rows="2" placeholder="Alamat rumah"></textarea>
+
+      <button class="btn-submit btn-mka" onclick="hantarMKA()">MASUK KEKUATAN (MKA)</button>
+      <div id="statusMKA" class="status-msg"></div>
+    </div>
+
+    <!-- BORANG KKA -->
+    <div id="formKKA" class="tab-content">
+      <p style="font-size:0.82rem; color:#94a3b8; line-height:1.4;">
+        Masukkan No Tentera. Sistem akan mencari rekod anggota dari mana-mana tab kekuatan, memindahkannya ke tab <strong>KKA</strong> dan memadamkannya dari tab asal secara automatik.
+      </p>
+
+      <label>Nombor Tentera:</label>
+      <input type="text" id="kkaNoTen" placeholder="Contoh: 372494">
+
+      <label>Tarikh Keluar (KKA):</label>
+      <input type="date" id="kkaTarikh">
+
+      <label>Catatan Pertukaran / Unit Baharu:</label>
+      <textarea id="kkaCatatan" rows="3" placeholder="Contoh: Bertukar ke Markas Tentera Udara"></textarea>
+
+      <button class="btn-submit btn-kka" onclick="hantarKKA()">KELUARKAN DARI KEKUATAN (KKA)</button>
+      <div id="statusKKA" class="status-msg"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxZyO-6mvKI5slXGMix03U2I7FK545NGeqvvVJJLbd8VTaw0IhooCN-iK2JsdpQseE1CQ/exec";
+
+    function switchMod(mod) {
+      document.getElementById("formMKA").classList.remove("active");
+      document.getElementById("formKKA").classList.remove("active");
+      document.getElementById("btnMKA").classList.remove("active");
+      document.getElementById("btnKKA").classList.remove("active");
+
+      if (mod === "MKA") {
+        document.getElementById("formMKA").classList.add("active");
+        document.getElementById("btnMKA").classList.add("active");
+      } else {
+        document.getElementById("formKKA").classList.add("active");
+        document.getElementById("btnKKA").classList.add("active");
+      }
+    }
+
+    async function hantarMKA() {
+      const statusBox = document.getElementById("statusMKA");
+      const noTen = document.getElementById("mkaNoTen").value.trim();
+      const nama = document.getElementById("mkaNama").value.trim();
+
+      if (!noTen || !nama) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Sila lengkapkan No Tentera dan Nama!</span>";
+        return;
+      }
+
+      statusBox.innerHTML = "<span style='color:#38bdf8;'>Sedang mendaftarkan maklumat...</span>";
+
+      const payload = {
+        action: "MKA",
+        targetTab: document.getElementById("mkaTabTarget").value,
+        noTentera: noTen,
+        pangkat: document.getElementById("mkaPkt").value.trim(),
+        nama: nama,
+        mka: document.getElementById("mkaTarikh").value,
+        tred: document.getElementById("mkaTred").value.trim(),
+        noKpAnggota: document.getElementById("mkaNoKp").value.trim(),
+        bangsa: document.getElementById("mkaBangsa").value.trim(),
+        agama: document.getElementById("mkaAgama").value.trim(),
+        statusKahwin: document.getElementById("mkaStatus").value.trim(),
+        tarikhLahir: document.getElementById("mkaTarikhLahir").value,
+        umur: document.getElementById("mkaUmur").value.trim(),
+        noTel: document.getElementById("mkaNoTel").value.trim(),
+        emailAirforce: document.getElementById("mkaEmailAF").value.trim(),
+        emailPersonal: document.getElementById("mkaEmailPersonal").value.trim(),
+        namaWaris: document.getElementById("mkaNamaWaris").value.trim(),
+        hubunganWaris: document.getElementById("mkaHubunganWaris").value.trim(),
+        noTelWaris: document.getElementById("mkaNoTelWaris").value.trim(),
+        alamatWaris: document.getElementById("mkaAlamatWaris").value.trim()
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.status === "success") {
+          statusBox.innerHTML = `<span style='color:#4ade80;'>${result.message}</span>`;
+          document.getElementById("mkaNoTen").value = "";
+          document.getElementById("mkaNama").value = "";
+        } else {
+          statusBox.innerHTML = `<span style='color:#f87171;'>${result.message}</span>`;
+        }
+      } catch (err) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat semasa menghantar data.</span>";
+      }
+    }
+
+    async function hantarKKA() {
+      const statusBox = document.getElementById("statusKKA");
+      const noTen = document.getElementById("kkaNoTen").value.trim();
+
+      if (!noTen) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Sila masukkan No Tentera!</span>";
+        return;
+      }
+
+      statusBox.innerHTML = "<span style='color:#38bdf8;'>Sedang memindahkan rekod ke KKA...</span>";
+
+      const payload = {
+        action: "KKA",
+        noTentera: noTen,
+        tarikhKKA: document.getElementById("kkaTarikh").value,
+        catatanKKA: document.getElementById("kkaCatatan").value.trim()
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.status === "success") {
+          statusBox.innerHTML = `<span style='color:#4ade80;'>${result.message}</span>`;
+          document.getElementById("kkaNoTen").value = "";
+          document.getElementById("kkaCatatan").value = "";
+        } else {
+          statusBox.innerHTML = `<span style='color:#f87171;'>${result.message}</span>`;
+        }
+      } catch (err) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat sambungan.</span>";
+      }
+    }
+  </script>
+</body>
+</html>
