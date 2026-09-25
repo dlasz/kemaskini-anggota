@@ -177,12 +177,10 @@
       text-transform: uppercase;
       font-size: 0.75rem;
     }
-    /* Warna teks baris jadual dibuat putih cerah */
     td {
       color: #ffffff !important;
     }
 
-    /* Kotak Kata Laluan */
     .lock-box {
       background: #091322;
       border: 1px solid #1e3a5f;
@@ -190,6 +188,77 @@
       padding: 20px;
       text-align: center;
       margin-top: 15px;
+    }
+
+    .btn-print {
+      width: 100%;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-weight: bold;
+      margin-top: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-print:hover {
+      background-color: #059669;
+    }
+
+    /* FORMAT CETAKAN RASMI (PRINT / PDF) */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        padding: 0 !important;
+      }
+      .card {
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      .tabs, .filter-btn-group, .btn-print, #formMKA, #formKKA, #pantauLockArea, .header-box img, .header-box p {
+        display: none !important;
+      }
+      .header-box h2 {
+        color: black !important;
+        font-size: 1.4rem !important;
+        text-align: center !important;
+        border-bottom: 2px solid black !important;
+        padding-bottom: 8px !important;
+        margin-bottom: 10px !important;
+      }
+      .section-title {
+        color: black !important;
+        border-bottom: 1px solid black !important;
+      }
+      .table-container {
+        border: 1px solid #000 !important;
+        background: white !important;
+      }
+      table {
+        color: black !important;
+      }
+      th {
+        background-color: #f1f5f9 !important;
+        color: black !important;
+        border: 1px solid #000 !important;
+      }
+      td {
+        color: black !important;
+        border: 1px solid #ccc !important;
+      }
+      td span {
+        border: 1px solid #000 !important;
+        color: black !important;
+        background: none !important;
+      }
     }
   </style>
 </head>
@@ -418,13 +487,13 @@
 
     <!-- ==================== 3. TAB PEMANTAUAN ==================== -->
     <div id="formPANTAU" class="tab-content">
-      <div class="section-title">Pusat Peringatan & Tindakan Pentadbiran</div>
+      <div class="section-title" id="tajukBahagianPantau">Pusat Peringatan & Tindakan Pentadbiran</div>
 
-      <!-- Ruangan Pengesahan Kata Laluan -->
+      <!-- Ruangan Kata Laluan -->
       <div id="pantauLockArea" class="lock-box">
         <div style="font-size:1.8rem; margin-bottom:8px;">🔒</div>
         <p style="font-size:0.85rem; color:#94a3b8; margin:0 0 12px 0;">
-          Bahagian ini dikhaskan untuk pentadbiran unit. Sila masukkan kata laluan untuk meneruskan:
+          Bahagian ini dikhaskan untuk pentadbiran unit. Sila masukkan kata laluan:
         </p>
         <div style="display:flex; gap:8px; max-width:320px; margin:0 auto;">
           <input type="password" id="inputPantauPass" placeholder="Kata Laluan" style="text-align:center;">
@@ -433,10 +502,10 @@
         <div id="passErrMsg" style="color:#f87171; font-size:0.8rem; margin-top:8px; display:none;">Kata laluan tidak sah!</div>
       </div>
 
-      <!-- Ruangan Utama Pemantauan (Muncul Selepas Kata Laluan Betul) -->
+      <!-- Ruangan Kandungan Pemantauan -->
       <div id="pantauContentArea" style="display:none;">
         <p style="font-size:0.8rem; color:#94a3b8;">
-          Pilih kategori di bawah untuk menyaring anggota yang perlu diambil tindakan dokumen/kemaskini:
+          Pilih kategori di bawah untuk menyaring anggota:
         </p>
 
         <div class="filter-btn-group">
@@ -455,6 +524,12 @@
             <tbody id="bodyPantau"></tbody>
           </table>
         </div>
+        
+        <!-- Butang Cetak Rasmi -->
+        <button id="btnPrint" class="btn-print" style="display:none;" onclick="cetakLaporan()">
+          🖨️ CETAK / SIMPAN SENARAI KE PDF
+        </button>
+
         <div id="tiadaRekodMsg" style="display:none; text-align:center; color:#94a3b8; font-size:0.85rem; padding:15px;">
           Tiada rekod anggota ditemui bagi kriteria ini.
         </div>
@@ -481,6 +556,10 @@
       } else {
         errMsg.style.display = "block";
       }
+    }
+
+    function cetakLaporan() {
+      window.print();
     }
 
     // 1. Ekstrak Tarikh Lahir & Kira Umur Secara Automatik
@@ -527,7 +606,6 @@
         document.getElementById("formPANTAU").classList.add("active");
         document.getElementById("btnPantau").classList.add("active");
 
-        // Periksa status buka kunci
         if (!isPantauUnlocked) {
           document.getElementById("pantauLockArea").style.display = "block";
           document.getElementById("pantauContentArea").style.display = "none";
@@ -660,16 +738,19 @@
       }
     }
 
-    // 6. Penarikan Data Peringatan (Teks Dibuat Jelas dan Cerah)
+    // 6. Penarikan Data Peringatan & Cetak
     async function muatPeringatan(kategori) {
       const loader = document.getElementById("loadingPantau");
       const container = document.getElementById("kontenaJadual");
+      const btnPrint = document.getElementById("btnPrint");
       const noData = document.getElementById("tiadaRekodMsg");
       const thead = document.getElementById("headPantau");
       const tbody = document.getElementById("bodyPantau");
+      const tajuk = document.getElementById("tajukBahagianPantau");
 
       loader.style.display = "block";
       container.style.display = "none";
+      btnPrint.style.display = "none";
       noData.style.display = "none";
       tbody.innerHTML = "";
 
@@ -680,6 +761,7 @@
 
         if (result.status === "success" && result.senarai.length > 0) {
           if (kategori === "TTP") {
+            tajuk.innerText = "SENARAI PERINGATAN TAMAT PERKHIDMATAN (TTP) - PU KUCHING";
             thead.innerHTML = `<tr><th>NO TEN</th><th>PKT & NAMA</th><th>SKN / CWG</th><th>TARIKH TTP</th><th>BAKI TEMPOH</th><th>NO TEL</th></tr>`;
             result.senarai.forEach(item => {
               tbody.innerHTML += `<tr>
@@ -692,6 +774,7 @@
               </tr>`;
             });
           } else if (kategori === "TATADEMMOT") {
+            tajuk.innerText = "SENARAI PERINGATAN TAMAT TATADEMMOT - PU KUCHING";
             thead.innerHTML = `<tr><th>NO TEN</th><th>PKT & NAMA</th><th>SKN / CWG</th><th>TARIKH TAMAT</th><th>STATUS BAKI</th><th>NO TEL</th></tr>`;
             result.senarai.forEach(item => {
               tbody.innerHTML += `<tr>
@@ -704,6 +787,7 @@
               </tr>`;
             });
           } else if (kategori === "PANGKAT_TETAP") {
+            tajuk.innerText = "SENARAI PERINGATAN PENGESAHAN PANGKAT TETAP - PU KUCHING";
             thead.innerHTML = `<tr><th>NO TEN</th><th>PKT & NAMA</th><th>SKN / CWG</th><th>PANGKUAN</th><th>TARIKH LAYAK TETAP</th><th>STATUS</th></tr>`;
             result.senarai.forEach(item => {
               tbody.innerHTML += `<tr>
@@ -717,6 +801,7 @@
             });
           }
           container.style.display = "block";
+          btnPrint.style.display = "flex";
         } else {
           noData.style.display = "block";
         }
