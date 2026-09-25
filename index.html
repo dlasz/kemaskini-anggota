@@ -28,7 +28,7 @@
       border-radius: 14px;
       padding: 22px;
       width: 100%;
-      max-width: 520px;
+      max-width: 540px;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(6px);
       z-index: 1;
@@ -114,6 +114,16 @@
       color: #38bdf8;
       font-weight: bold;
     }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
     .btn-submit {
       width: 100%;
       padding: 12px;
@@ -147,12 +157,12 @@
       <button id="btnKKA" onclick="switchMod('KKA')">KKA (Lapor Keluar)</button>
     </div>
 
-    <!-- BORANG MKA -->
+    <!-- ==================== BORANG MKA ==================== -->
     <div id="formMKA" class="tab-content active">
-      <div class="section-title">Penempatan & Butiran Perkhidmatan</div>
       
-      <label>Pilihan Tab Cawangan / Skn:</label>
-      <select id="mkaTabTarget">
+      <div class="section-title">1. Penempatan & Perkhidmatan</div>
+      <label>SKN / CWG PENEMPATAN:</label>
+      <select id="mkaTargetTab">
         <option value="NO 1 SKN">NO 1 SKN</option>
         <option value="SKN 330">SKN 330</option>
         <option value="DETCH 3 SKN">DETCH 3 SKN</option>
@@ -164,85 +174,203 @@
         <option value="CWG BOMBA">CWG BOMBA</option>
       </select>
 
-      <label>No Tentera:</label>
-      <input type="text" id="mkaNoTen" placeholder="Contoh: 372494">
+      <div class="grid-2">
+        <div>
+          <label>NO TEN:</label>
+          <input type="text" id="mkaNoTen" placeholder="Contoh: 372494">
+        </div>
+        <div>
+          <label>PKT:</label>
+          <input type="text" id="mkaPkt" placeholder="Contoh: SJN U">
+        </div>
+      </div>
 
-      <label>Pangkat Semasa:</label>
-      <input type="text" id="mkaPkt" placeholder="Contoh: LT KOL TUDM">
-
-      <label>Nama Penuh:</label>
+      <label>NAMA:</label>
       <input type="text" id="mkaNama" placeholder="NAMA PENUH">
 
-      <label>Tarikh MKA:</label>
-      <input type="date" id="mkaTarikh">
+      <div class="grid-2">
+        <div>
+          <label>MKA (Tarikh Masuk):</label>
+          <input type="date" id="mkaTarikh">
+        </div>
+        <div>
+          <label>TRED:</label>
+          <input type="text" id="mkaTred" placeholder="Ketukangan / Tred">
+        </div>
+      </div>
 
-      <label>Tred / Ketukangan:</label>
-      <input type="text" id="mkaTred" placeholder="Contoh: JURUTERBANG / KEJURUTERAAN">
-
-      <div class="section-title">Maklumat Peribadi</div>
-      <label>No Kad Pengenalan Anggota:</label>
+      <div class="section-title">2. Maklumat Peribadi</div>
+      <label>NO KP (ANGGOTA):</label>
       <input type="text" id="mkaNoKp" placeholder="Contoh: 900202-03-2563" oninput="prosesKadPengenalan(this.value)">
 
-      <label>Bangsa / Agama / Status:</label>
-      <div style="display:flex; gap:6px;">
-        <input type="text" id="mkaBangsa" placeholder="Bangsa">
-        <input type="text" id="mkaAgama" placeholder="Agama">
-        <input type="text" id="mkaStatus" placeholder="Kahwin/Bujang">
+      <div class="grid-3">
+        <div>
+          <label>BANGSA:</label>
+          <input type="text" id="mkaBangsa" placeholder="Melayu/Iban dll">
+        </div>
+        <div>
+          <label>AGAMA:</label>
+          <input type="text" id="mkaAgama" placeholder="Islam/Kristian">
+        </div>
+        <div>
+          <label>STATUS:</label>
+          <input type="text" id="mkaStatus" placeholder="Kahwin/Bujang">
+        </div>
       </div>
 
-      <label>Tarikh Lahir & Umur (Auto):</label>
-      <div style="display:flex; gap:6px;">
-        <input type="date" id="mkaTarikhLahir" onchange="kiraUmur(this.value)">
-        <input type="number" id="mkaUmur" class="auto-field" placeholder="Umur (Auto)" readonly>
+      <div class="grid-2">
+        <div>
+          <label>TARIKH LAHIR (Auto):</label>
+          <input type="date" id="mkaTarikhLahir" onchange="kiraUmur(this.value)">
+        </div>
+        <div>
+          <label>UMUR (TAHUN):</label>
+          <input type="number" id="mkaUmur" class="auto-field" placeholder="Auto" readonly>
+        </div>
       </div>
 
-      <label>No Telefon Anggota:</label>
-      <input type="text" id="mkaNoTel" placeholder="Contoh: 013-5332494">
-
-      <label>Email Airforce & Personal:</label>
-      <input type="email" id="mkaEmailAF" placeholder="emel@airforce.mil.my" style="margin-bottom:6px;">
-      <input type="email" id="mkaEmailPersonal" placeholder="emel.peribadi@gmail.com">
-
-      <div class="section-title">Maklumat Waris</div>
-      <label>Nama Waris:</label>
-      <input type="text" id="mkaNamaWaris" placeholder="Nama waris terdekat">
-
-      <label>Hubungan & No Telefon Waris:</label>
-      <div style="display:flex; gap:6px;">
-        <input type="text" id="mkaHubunganWaris" placeholder="Isteri / Ibu / Bapa">
-        <input type="text" id="mkaNoTelWaris" placeholder="No Tel Waris">
+      <div class="grid-2">
+        <div>
+          <label>TMP:</label>
+          <input type="date" id="mkaTmp">
+        </div>
+        <div>
+          <label>TTP:</label>
+          <input type="date" id="mkaTtp">
+        </div>
       </div>
 
-      <label>Alamat Kediaman / Waris:</label>
-      <textarea id="mkaAlamatWaris" rows="2" placeholder="Alamat rumah"></textarea>
+      <div class="grid-2">
+        <div>
+          <label>UNIT INSURAN:</label>
+          <input type="text" id="mkaUnitInsuran" placeholder="Contoh: Takaful/Tiada">
+        </div>
+        <div>
+          <label>NO AHLI INSURAN:</label>
+          <input type="text" id="mkaNoAhliInsuran" placeholder="No Polisi / Ahli">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label>NO TELEFON:</label>
+          <input type="text" id="mkaNoTel" placeholder="01X-XXXXXXX">
+        </div>
+        <div>
+          <label>EMAIL PERSONAL:</label>
+          <input type="email" id="mkaEmailPersonal" placeholder="emel@gmail.com">
+        </div>
+      </div>
+
+      <div class="section-title">3. Maklumat Undi (SPR)</div>
+      <div class="grid-2">
+        <div>
+          <label>DAERAH MENGUNDI:</label>
+          <input type="text" id="mkaDaerahMengundi" placeholder="Daerah">
+        </div>
+        <div>
+          <label>DUN:</label>
+          <input type="text" id="mkaDun" placeholder="DUN">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label>PARLIMEN:</label>
+          <input type="text" id="mkaParlimen" placeholder="Parlimen">
+        </div>
+        <div>
+          <label>NEGERI:</label>
+          <input type="text" id="mkaNegeri" placeholder="Negeri">
+        </div>
+      </div>
+
+      <div class="section-title">4. Maklumat Waris & Keluarga</div>
+      <label>NAMA WARIS:</label>
+      <input type="text" id="mkaNamaWaris" placeholder="Nama waris">
+
+      <div class="grid-2">
+        <div>
+          <label>HUBUNGAN:</label>
+          <input type="text" id="mkaHubunganWaris" placeholder="Isteri/Ibu/Bapa">
+        </div>
+        <div>
+          <label>PEKERJAAN:</label>
+          <input type="text" id="mkaPekerjaanWaris" placeholder="Pekerjaan waris">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label>NO K/P (WARIS):</label>
+          <input type="text" id="mkaNoKpWaris" placeholder="No KP Waris">
+        </div>
+        <div>
+          <label>NO TEL (WARIS):</label>
+          <input type="text" id="mkaNoTelWaris" placeholder="No Tel Waris">
+        </div>
+      </div>
+
+      <label>ALAMAT WARIS:</label>
+      <textarea id="mkaAlamatWaris" rows="2" placeholder="Alamat kediaman waris"></textarea>
+
+      <label>BIL ANAK:</label>
+      <input type="number" id="mkaBilAnak" placeholder="Contoh: 0 / 1 / 2">
 
       <button class="btn-submit btn-mka" onclick="hantarMKA()">MASUK KEKUATAN (MKA)</button>
       <div id="statusMKA" class="status-msg"></div>
     </div>
 
-    <!-- BORANG KKA -->
+    <!-- ==================== BORANG KKA ==================== -->
     <div id="formKKA" class="tab-content">
+      <div class="section-title">Lapor Keluar Anggota (KKA)</div>
       <p style="font-size:0.82rem; color:#94a3b8; line-height:1.4;">
-        Masukkan No Tentera. Sistem akan mencari rekod anggota, memindahkannya ke tab <strong>KKA</strong> dan memadamkannya dari tab asal serta pangkalan DATA ANGGOTA.
+        Masukkan <strong>NO TEN</strong> dan tekan butang <strong>CARI</strong> untuk mendapatkan maklumat anggota secara automatik.
       </p>
 
-      <label>Nombor Tentera:</label>
-      <input type="text" id="kkaNoTen" placeholder="Contoh: 372494">
+      <label>NO TEN (WAJIB):</label>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="kkaNoTen" placeholder="Masukkan No Tentera">
+        <button type="button" onclick="cariDataKKA()" style="width:90px; background:#0284c7; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">CARI</button>
+      </div>
 
-      <label>Tarikh Keluar (KKA):</label>
-      <input type="date" id="kkaTarikh">
+      <div class="grid-2">
+        <div>
+          <label>PKT:</label>
+          <input type="text" id="kkaPkt" class="auto-field" placeholder="Pangkat" readonly>
+        </div>
+        <div>
+          <label>SKN / CWG:</label>
+          <input type="text" id="kkaUnitAsal" class="auto-field" placeholder="Unit Asal" readonly>
+        </div>
+      </div>
 
-      <label>Catatan Pertukaran / Unit Baharu:</label>
-      <textarea id="kkaCatatan" rows="3" placeholder="Contoh: Bertukar ke Markas Tentera Udara"></textarea>
+      <label>NAMA:</label>
+      <input type="text" id="kkaNama" class="auto-field" placeholder="Nama Penuh" readonly>
 
-      <button class="btn-submit btn-kka" onclick="hantarKKA()">KELUARKAN DARI KEKUATAN (KKA)</button>
+      <div class="grid-2">
+        <div>
+          <label>NO TELEFON:</label>
+          <input type="text" id="kkaNoTel" class="auto-field" placeholder="No Telefon" readonly>
+        </div>
+        <div>
+          <label>TARIKH KKA (WAJIB):</label>
+          <input type="date" id="kkaTarikh">
+        </div>
+      </div>
+
+      <label>UNIT BARU (WAJIB):</label>
+      <input type="text" id="kkaUnitBaru" placeholder="Contoh: MTU / PU Butterworth / Rejimen dll">
+
+      <button class="btn-submit btn-kka" onclick="hantarKKA()">SAHKAN KELUAR KEKUATAN (KKA)</button>
       <div id="statusKKA" class="status-msg"></div>
     </div>
+
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxZyO-6mvKI5slXGMix03U2I7FK545NGeqvvVJJLbd8VTaw0IhooCN-iK2JsdpQseE1CQ/exec";
 
+    // 1. Ekstrak Tarikh Lahir & Kira Umur secara automatik dari No KP
     function prosesKadPengenalan(ic) {
       const cleanIC = ic.replace(/[^0-9]/g, '');
       if (cleanIC.length >= 6) {
@@ -263,14 +391,11 @@
       if (!tarikhStr) return;
       const tLahir = new Date(tarikhStr);
       const hariIni = new Date();
-      
       let umur = hariIni.getFullYear() - tLahir.getFullYear();
       const perbezaanBulan = hariIni.getMonth() - tLahir.getMonth();
-      
       if (perbezaanBulan < 0 || (perbezaanBulan === 0 && hariIni.getDate() < tLahir.getDate())) {
         umur--;
       }
-      
       if (umur >= 0 && umur < 120) {
         document.getElementById("mkaUmur").value = umur;
       }
@@ -291,13 +416,14 @@
       }
     }
 
+    // 2. Fungsi Hantar MKA
     async function hantarMKA() {
       const statusBox = document.getElementById("statusMKA");
       const noTen = document.getElementById("mkaNoTen").value.trim();
       const nama = document.getElementById("mkaNama").value.trim();
 
       if (!noTen || !nama) {
-        statusBox.innerHTML = "<span style='color:#f87171;'>Sila lengkapkan No Tentera dan Nama!</span>";
+        statusBox.innerHTML = "<span style='color:#f87171;'>Sila lengkapkan sekurang-kurangnya No Tentera dan Nama!</span>";
         return;
       }
 
@@ -305,7 +431,7 @@
 
       const payload = {
         action: "MKA",
-        targetTab: document.getElementById("mkaTabTarget").value,
+        targetTab: document.getElementById("mkaTargetTab").value,
         noTentera: noTen,
         pangkat: document.getElementById("mkaPkt").value.trim(),
         nama: nama,
@@ -317,13 +443,23 @@
         statusKahwin: document.getElementById("mkaStatus").value.trim(),
         tarikhLahir: document.getElementById("mkaTarikhLahir").value,
         umur: document.getElementById("mkaUmur").value.trim(),
+        tmp: document.getElementById("mkaTmp").value,
+        ttp: document.getElementById("mkaTtp").value,
+        unitInsuran: document.getElementById("mkaUnitInsuran").value.trim(),
+        noAhliInsuran: document.getElementById("mkaNoAhliInsuran").value.trim(),
         noTel: document.getElementById("mkaNoTel").value.trim(),
-        emailAirforce: document.getElementById("mkaEmailAF").value.trim(),
-        emailPersonal: document.getElementById("mkaEmailPersonal").value.trim(),
+        daerahMengundi: document.getElementById("mkaDaerahMengundi").value.trim(),
+        dun: document.getElementById("mkaDun").value.trim(),
+        parlimen: document.getElementById("mkaParlimen").value.trim(),
+        negeri: document.getElementById("mkaNegeri").value.trim(),
         namaWaris: document.getElementById("mkaNamaWaris").value.trim(),
         hubunganWaris: document.getElementById("mkaHubunganWaris").value.trim(),
+        pekerjaanWaris: document.getElementById("mkaPekerjaanWaris").value.trim(),
+        noKpWaris: document.getElementById("mkaNoKpWaris").value.trim(),
+        alamatWaris: document.getElementById("mkaAlamatWaris").value.trim(),
         noTelWaris: document.getElementById("mkaNoTelWaris").value.trim(),
-        alamatWaris: document.getElementById("mkaAlamatWaris").value.trim()
+        bilAnak: document.getElementById("mkaBilAnak").value.trim(),
+        emailPersonal: document.getElementById("mkaEmailPersonal").value.trim()
       };
 
       try {
@@ -344,12 +480,49 @@
       }
     }
 
-    async function hantarKKA() {
+    // 3. Fungsi Cari Data Anggota untuk KKA
+    async function cariDataKKA() {
       const statusBox = document.getElementById("statusKKA");
       const noTen = document.getElementById("kkaNoTen").value.trim();
 
       if (!noTen) {
-        statusBox.innerHTML = "<span style='color:#f87171;'>Sila masukkan No Tentera!</span>";
+        statusBox.innerHTML = "<span style='color:#f87171;'>Sila masukkan No Tentera dahulu!</span>";
+        return;
+      }
+
+      statusBox.innerHTML = "<span style='color:#38bdf8;'>Mencari rekod...</span>";
+
+      try {
+        const res = await fetch(`${API_URL}?action=CARI_ANGGOTA&noTentera=${encodeURIComponent(noTen)}`);
+        const result = await res.json();
+
+        if (result.status === "success") {
+          document.getElementById("kkaPkt").value = result.data.pangkat || "";
+          document.getElementById("kkaNama").value = result.data.nama || "";
+          document.getElementById("kkaUnitAsal").value = result.data.unit || "";
+          document.getElementById("kkaNoTel").value = result.data.noTel || "";
+          statusBox.innerHTML = `<span style='color:#4ade80;'>Rekod ditemui dari ${result.data.unit}!</span>`;
+        } else {
+          statusBox.innerHTML = `<span style='color:#f87171;'>Rekod tidak ditemui dalam pangkalan data!</span>`;
+          document.getElementById("kkaPkt").value = "";
+          document.getElementById("kkaNama").value = "";
+          document.getElementById("kkaUnitAsal").value = "";
+          document.getElementById("kkaNoTel").value = "";
+        }
+      } catch (err) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat semasa mencari rekod.</span>";
+      }
+    }
+
+    // 4. Fungsi Hantar KKA
+    async function hantarKKA() {
+      const statusBox = document.getElementById("statusKKA");
+      const noTen = document.getElementById("kkaNoTen").value.trim();
+      const tarikhKKA = document.getElementById("kkaTarikh").value;
+      const unitBaru = document.getElementById("kkaUnitBaru").value.trim();
+
+      if (!noTen || !tarikhKKA || !unitBaru) {
+        statusBox.innerHTML = "<span style='color:#f87171;'>Sila lengkapkan NO TEN, TARIKH KKA, dan UNIT BARU!</span>";
         return;
       }
 
@@ -358,8 +531,8 @@
       const payload = {
         action: "KKA",
         noTentera: noTen,
-        tarikhKKA: document.getElementById("kkaTarikh").value,
-        catatanKKA: document.getElementById("kkaCatatan").value.trim()
+        tarikhKKA: tarikhKKA,
+        unitBaru: unitBaru
       };
 
       try {
@@ -371,7 +544,11 @@
         if (result.status === "success") {
           statusBox.innerHTML = `<span style='color:#4ade80;'>${result.message}</span>`;
           document.getElementById("kkaNoTen").value = "";
-          document.getElementById("kkaCatatan").value = "";
+          document.getElementById("kkaPkt").value = "";
+          document.getElementById("kkaNama").value = "";
+          document.getElementById("kkaUnitAsal").value = "";
+          document.getElementById("kkaNoTel").value = "";
+          document.getElementById("kkaUnitBaru").value = "";
         } else {
           statusBox.innerHTML = `<span style='color:#f87171;'>${result.message}</span>`;
         }
