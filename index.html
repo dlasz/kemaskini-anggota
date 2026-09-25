@@ -28,7 +28,7 @@
       border-radius: 14px;
       padding: 22px;
       width: 100%;
-      max-width: 540px;
+      max-width: 580px;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(6px);
       z-index: 1;
@@ -59,17 +59,18 @@
     }
     .tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 20px;
     }
     .tabs button {
       flex: 1;
-      padding: 10px;
+      padding: 10px 5px;
       background-color: #1e2e47;
       color: #94a3b8;
       border: none;
       border-radius: 6px;
       font-weight: bold;
+      font-size: 0.82rem;
       cursor: pointer;
     }
     .tabs button.active {
@@ -114,16 +115,8 @@
       color: #38bdf8;
       font-weight: bold;
     }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 6px;
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
     .btn-submit {
       width: 100%;
       padding: 12px;
@@ -136,10 +129,50 @@
     }
     .btn-mka { background-color: #0284c7; color: white; }
     .btn-kka { background-color: #e11d48; color: white; }
-    .status-msg {
-      text-align: center;
-      margin-top: 12px;
-      font-size: 0.85rem;
+    .status-msg { text-align: center; margin-top: 12px; font-size: 0.85rem; }
+
+    /* Reka Bentuk Tab Pemantauan */
+    .filter-btn-group {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 15px;
+    }
+    .filter-btn-group button {
+      flex: 1;
+      padding: 8px;
+      background-color: #1e3a5f;
+      color: #e2e8f0;
+      border: 1px solid #38bdf8;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .filter-btn-group button:hover {
+      background-color: #0284c7;
+    }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 10px;
+      background: #091322;
+      border-radius: 6px;
+      border: 1px solid #1e3a5f;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      text-align: left;
+    }
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #1e2e47;
+      white-space: nowrap;
+    }
+    th {
+      background-color: #132238;
+      color: #38bdf8;
     }
   </style>
 </head>
@@ -152,14 +185,15 @@
       <p>Sistem Pengurusan Kekuatan Anggota</p>
     </div>
 
+    <!-- TIGA TAB UTAMA -->
     <div class="tabs">
-      <button id="btnMKA" class="active" onclick="switchMod('MKA')">MKA (Lapor Masuk)</button>
-      <button id="btnKKA" onclick="switchMod('KKA')">KKA (Lapor Keluar)</button>
+      <button id="btnMKA" class="active" onclick="switchMod('MKA')">MKA (Masuk)</button>
+      <button id="btnKKA" onclick="switchMod('KKA')">KKA (Keluar)</button>
+      <button id="btnPantau" onclick="switchMod('PANTAU')">Pemantauan</button>
     </div>
 
-    <!-- ==================== BORANG MKA ==================== -->
+    <!-- ==================== 1. BORANG MKA ==================== -->
     <div id="formMKA" class="tab-content active">
-      
       <div class="section-title">1. Penempatan & Perkhidmatan</div>
       <label>SKN / CWG PENEMPATAN:</label>
       <select id="mkaTargetTab">
@@ -195,7 +229,7 @@
         </div>
         <div>
           <label>TRED:</label>
-          <input type="text" id="mkaTred" placeholder="Ketukangan / Tred">
+          <input type="text" id="mkaTred" placeholder="Tred / Ketukangan">
         </div>
       </div>
 
@@ -206,15 +240,15 @@
       <div class="grid-3">
         <div>
           <label>BANGSA:</label>
-          <input type="text" id="mkaBangsa" placeholder="Melayu/Iban dll">
+          <input type="text" id="mkaBangsa" placeholder="Bangsa">
         </div>
         <div>
           <label>AGAMA:</label>
-          <input type="text" id="mkaAgama" placeholder="Islam/Kristian">
+          <input type="text" id="mkaAgama" placeholder="Agama">
         </div>
         <div>
           <label>STATUS:</label>
-          <input type="text" id="mkaStatus" placeholder="Kahwin/Bujang">
+          <input type="text" id="mkaStatus" placeholder="Status">
         </div>
       </div>
 
@@ -243,11 +277,11 @@
       <div class="grid-2">
         <div>
           <label>UNIT INSURAN:</label>
-          <input type="text" id="mkaUnitInsuran" placeholder="Contoh: Takaful/Tiada">
+          <input type="text" id="mkaUnitInsuran" placeholder="Contoh: Takaful">
         </div>
         <div>
           <label>NO AHLI INSURAN:</label>
-          <input type="text" id="mkaNoAhliInsuran" placeholder="No Polisi / Ahli">
+          <input type="text" id="mkaNoAhliInsuran" placeholder="No Ahli">
         </div>
       </div>
 
@@ -311,20 +345,20 @@
       </div>
 
       <label>ALAMAT WARIS:</label>
-      <textarea id="mkaAlamatWaris" rows="2" placeholder="Alamat kediaman waris"></textarea>
+      <textarea id="mkaAlamatWaris" rows="2" placeholder="Alamat rumah"></textarea>
 
       <label>BIL ANAK:</label>
-      <input type="number" id="mkaBilAnak" placeholder="Contoh: 0 / 1 / 2">
+      <input type="number" id="mkaBilAnak" placeholder="0 / 1 / 2">
 
       <button class="btn-submit btn-mka" onclick="hantarMKA()">MASUK KEKUATAN (MKA)</button>
       <div id="statusMKA" class="status-msg"></div>
     </div>
 
-    <!-- ==================== BORANG KKA ==================== -->
+    <!-- ==================== 2. BORANG KKA ==================== -->
     <div id="formKKA" class="tab-content">
       <div class="section-title">Lapor Keluar Anggota (KKA)</div>
       <p style="font-size:0.82rem; color:#94a3b8; line-height:1.4;">
-        Masukkan <strong>NO TEN</strong> dan tekan butang <strong>CARI</strong> untuk mendapatkan maklumat anggota secara automatik.
+        Masukkan <strong>NO TEN</strong> dan klik butang <strong>CARI</strong> untuk menarik maklumat anggota daripada Google Sheets secara automatik.
       </p>
 
       <label>NO TEN (WAJIB):</label>
@@ -365,22 +399,48 @@
       <div id="statusKKA" class="status-msg"></div>
     </div>
 
+    <!-- ==================== 3. TAB PEMANTAUAN ==================== -->
+    <div id="formPANTAU" class="tab-content">
+      <div class="section-title">Pusat Peringatan & Tindakan Pentadbiran</div>
+      <p style="font-size:0.8rem; color:#94a3b8;">
+        Pilih kategori di bawah untuk menyaring anggota yang perlu diambil tindakan dokumen/kemaskini:
+      </p>
+
+      <div class="filter-btn-group">
+        <button type="button" onclick="muatPeringatan('TTP')">⏳ TTP (&le; 18 Bulan)</button>
+        <button type="button" onclick="muatPeringatan('TATADEMMOT')">📋 Tatademmot (&le; 4 Bulan)</button>
+        <button type="button" onclick="muatPeringatan('PANGKAT_TETAP')">🎖️ Pangkat Tetap (&le; 4 Bulan)</button>
+      </div>
+
+      <div id="loadingPantau" style="display:none; text-align:center; color:#38bdf8; font-size:0.85rem; padding:10px;">
+        Sedang mengimbas rekod dari pangkalan data...
+      </div>
+
+      <div class="table-container" id="kontenaJadual" style="display:none;">
+        <table id="jadualPantau">
+          <thead id="headPantau"></thead>
+          <tbody id="bodyPantau"></tbody>
+        </table>
+      </div>
+      <div id="tiadaRekodMsg" style="display:none; text-align:center; color:#94a3b8; font-size:0.85rem; padding:15px;">
+        Tiada rekod anggota ditemui bagi kriteria ini.
+      </div>
+    </div>
+
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxZyO-6mvKI5slXGMix03U2I7FK545NGeqvvVJJLbd8VTaw0IhooCN-iK2JsdpQseE1CQ/exec";
 
-    // 1. Ekstrak Tarikh Lahir & Kira Umur secara automatik dari No KP
+    // 1. Ekstrak Tarikh Lahir & Kira Umur Secara Automatik
     function prosesKadPengenalan(ic) {
       const cleanIC = ic.replace(/[^0-9]/g, '');
       if (cleanIC.length >= 6) {
         let yr = parseInt(cleanIC.substring(0, 2), 10);
         const mm = cleanIC.substring(2, 4);
         const dd = cleanIC.substring(4, 6);
-
         const currentShortYear = new Date().getFullYear() % 100;
         const fullYear = (yr <= currentShortYear) ? (2000 + yr) : (1900 + yr);
-
         const tarikhLahirStr = `${fullYear}-${mm}-${dd}`;
         document.getElementById("mkaTarikhLahir").value = tarikhLahirStr;
         kiraUmur(tarikhLahirStr);
@@ -401,22 +461,24 @@
       }
     }
 
+    // 2. Pertukaran Tab
     function switchMod(mod) {
-      document.getElementById("formMKA").classList.remove("active");
-      document.getElementById("formKKA").classList.remove("active");
-      document.getElementById("btnMKA").classList.remove("active");
-      document.getElementById("btnKKA").classList.remove("active");
+      ["formMKA", "formKKA", "formPANTAU"].forEach(id => document.getElementById(id).classList.remove("active"));
+      ["btnMKA", "btnKKA", "btnPantau"].forEach(id => document.getElementById(id).classList.remove("active"));
 
       if (mod === "MKA") {
         document.getElementById("formMKA").classList.add("active");
         document.getElementById("btnMKA").classList.add("active");
-      } else {
+      } else if (mod === "KKA") {
         document.getElementById("formKKA").classList.add("active");
         document.getElementById("btnKKA").classList.add("active");
+      } else {
+        document.getElementById("formPANTAU").classList.add("active");
+        document.getElementById("btnPantau").classList.add("active");
       }
     }
 
-    // 2. Fungsi Hantar MKA
+    // 3. Penghantaran Data MKA
     async function hantarMKA() {
       const statusBox = document.getElementById("statusMKA");
       const noTen = document.getElementById("mkaNoTen").value.trim();
@@ -463,10 +525,7 @@
       };
 
       try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         const result = await res.json();
         if (result.status === "success") {
           statusBox.innerHTML = `<span style='color:#4ade80;'>${result.message}</span>`;
@@ -476,11 +535,11 @@
           statusBox.innerHTML = `<span style='color:#f87171;'>${result.message}</span>`;
         }
       } catch (err) {
-        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat semasa menghantar data.</span>";
+        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat menghantar data.</span>";
       }
     }
 
-    // 3. Fungsi Cari Data Anggota untuk KKA
+    // 4. Carian Rekod Anggota untuk KKA
     async function cariDataKKA() {
       const statusBox = document.getElementById("statusKKA");
       const noTen = document.getElementById("kkaNoTen").value.trim();
@@ -489,13 +548,11 @@
         statusBox.innerHTML = "<span style='color:#f87171;'>Sila masukkan No Tentera dahulu!</span>";
         return;
       }
-
       statusBox.innerHTML = "<span style='color:#38bdf8;'>Mencari rekod...</span>";
 
       try {
         const res = await fetch(`${API_URL}?action=CARI_ANGGOTA&noTentera=${encodeURIComponent(noTen)}`);
         const result = await res.json();
-
         if (result.status === "success") {
           document.getElementById("kkaPkt").value = result.data.pangkat || "";
           document.getElementById("kkaNama").value = result.data.nama || "";
@@ -504,17 +561,13 @@
           statusBox.innerHTML = `<span style='color:#4ade80;'>Rekod ditemui dari ${result.data.unit}!</span>`;
         } else {
           statusBox.innerHTML = `<span style='color:#f87171;'>Rekod tidak ditemui dalam pangkalan data!</span>`;
-          document.getElementById("kkaPkt").value = "";
-          document.getElementById("kkaNama").value = "";
-          document.getElementById("kkaUnitAsal").value = "";
-          document.getElementById("kkaNoTel").value = "";
         }
       } catch (err) {
-        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat semasa mencari rekod.</span>";
+        statusBox.innerHTML = "<span style='color:#f87171;'>Ralat semasa membuat carian.</span>";
       }
     }
 
-    // 4. Fungsi Hantar KKA
+    // 5. Penghantaran KKA
     async function hantarKKA() {
       const statusBox = document.getElementById("statusKKA");
       const noTen = document.getElementById("kkaNoTen").value.trim();
@@ -527,19 +580,10 @@
       }
 
       statusBox.innerHTML = "<span style='color:#38bdf8;'>Sedang memindahkan rekod ke KKA...</span>";
-
-      const payload = {
-        action: "KKA",
-        noTentera: noTen,
-        tarikhKKA: tarikhKKA,
-        unitBaru: unitBaru
-      };
+      const payload = { action: "KKA", noTentera: noTen, tarikhKKA: tarikhKKA, unitBaru: unitBaru };
 
       try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         const result = await res.json();
         if (result.status === "success") {
           statusBox.innerHTML = `<span style='color:#4ade80;'>${result.message}</span>`;
@@ -554,6 +598,73 @@
         }
       } catch (err) {
         statusBox.innerHTML = "<span style='color:#f87171;'>Ralat sambungan.</span>";
+      }
+    }
+
+    // 6. Penarikan Data Peringatan (TTP, Tatademmot, Pangkat Tetap)
+    async function muatPeringatan(kategori) {
+      const loader = document.getElementById("loadingPantau");
+      const container = document.getElementById("kontenaJadual");
+      const noData = document.getElementById("tiadaRekodMsg");
+      const thead = document.getElementById("headPantau");
+      const tbody = document.getElementById("bodyPantau");
+
+      loader.style.display = "block";
+      container.style.display = "none";
+      noData.style.display = "none";
+      tbody.innerHTML = "";
+
+      try {
+        const res = await fetch(`${API_URL}?action=AMBIL_PERINGATAN&jenis=${kategori}`);
+        const result = await res.json();
+        loader.style.display = "none";
+
+        if (result.status === "success" && result.senarai.length > 0) {
+          if (kategori === "TTP") {
+            thead.innerHTML = `<tr><th>NO TEN</th><th>PKT & NAMA</th><th>SKN / CWG</th><th>TARIKH TTP</th><th>BAKI TEMPOH</th><th>NO TEL</th></tr>`;
+            result.senarai.forEach(item => {
+              tbody.innerHTML += `<tr>
+                <td><strong>${item.noTen}</strong></td>
+                <td>${item.pkt} ${item.nama}</td>
+                <td style="color:#38bdf8;">${item.cwg}</td>
+                <td style="color:#f87171; font-weight:bold;">${item.tarikh}</td>
+                <td><span style="background:#dc2626; color:white; padding:2px 6px; border-radius:4px; font-weight:bold;">${item.baki}</span></td>
+                <td>${item.noTel}</td>
+              </tr>`;
+            });
+          } else if (kategori === "TATADEMMOT") {
+            thead.innerHTML = `<tr><th>NO TEN</th><th>PKT & NAMA</th><th>SKN / CWG</th><th>TARIKH TAMAT</th><th>STATUS BAKI</th><th>NO TEL</th></tr>`;
+            result.senarai.forEach(item => {
+              tbody.innerHTML += `<tr>
+                <td><strong>${item.noTen}</strong></td>
+                <td>${item.pkt} ${item.nama}</td>
+                <td style="color:#38bdf8;">${item.cwg}</td>
+                <td style="color:#fbbf24; font-weight:bold;">${item.tarikh}</td>
+                <td><span style="background:#b45309; color:white; padding:2px 6px; border-radius:4px; font-weight:bold;">${item.baki}</span></td>
+                <td>${item.noTel}</td>
+              </tr>`;
+            });
+          } else if (kategori === "PANGKAT_TETAP") {
+            thead.innerHTML = `<tr><th>NO TEN</th><th>PKT & NAMA</th><th>SKN / CWG</th><th>PANGKUAN</th><th>TARIKH LAYAK TETAP</th><th>STATUS</th></tr>`;
+            result.senarai.forEach(item => {
+              tbody.innerHTML += `<tr>
+                <td><strong>${item.noTen}</strong></td>
+                <td>${item.pkt} ${item.nama}</td>
+                <td style="color:#38bdf8;">${item.cwg}</td>
+                <td>${item.pktPangkuan || "-"}</td>
+                <td style="color:#4ade80; font-weight:bold;">${item.tarikh}</td>
+                <td><span style="background:#059669; color:white; padding:2px 6px; border-radius:4px; font-weight:bold;">${item.baki}</span></td>
+              </tr>`;
+            });
+          }
+          container.style.display = "block";
+        } else {
+          noData.style.display = "block";
+        }
+      } catch (err) {
+        loader.style.display = "none";
+        noData.innerHTML = "Ralat semasa memuat turun data.";
+        noData.style.display = "block";
       }
     }
   </script>
